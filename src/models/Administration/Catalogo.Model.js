@@ -17,7 +17,7 @@ async function addCatalogo(catalogoData) {
     }
     await catalogo.query('BEGIN');
 
-    const catalogoInsertQuery = ` INSERT INTO administracion.catalogo (descripcion, estado, fechacreacion) VALUES ($1, $2, NOW()) RETURNING *; `;
+    const catalogoInsertQuery = ` INSERT INTO administracion.catalogo (descripcion, estado, fechacreacion) VALUES ($1, $2, NOW()::timestamp(0)) RETURNING *; `;
     const catalogoInsertResult = await catalogo.query(catalogoInsertQuery, [descripcion, estado]);
 
     await catalogo.query('COMMIT');
@@ -115,7 +115,7 @@ async function addDetCatalogo(catalogoData) {
     }
     await catalogoDet.query('BEGIN');
 
-    const catalogoInsertQuery = ` INSERT INTO administracion.detallecatalogo (catalogo_id, descripcion, valor, estado, fechacreacion) VALUES ($1, $2, $3, $4, NOW()) RETURNING *; `;
+    const catalogoInsertQuery = ` INSERT INTO administracion.detallecatalogo (catalogo_id, descripcion, valor, estado, fechacreacion) VALUES ($1, $2, $3, $4, NOW()::timestamp(0)) RETURNING *; `;
     const catalogoInsertResult = await catalogoDet.query(catalogoInsertQuery, [catalogo_id, descripcion, valor, estado]);
 
     await catalogoDet.query('COMMIT');

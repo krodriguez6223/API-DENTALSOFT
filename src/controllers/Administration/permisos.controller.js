@@ -3,16 +3,16 @@ import Permisos from '../../models/Administration/Permisos.Model.js';
 
 
 export const createPermisos = async (req, res) => {
-    const { nombre, estado, } = req.body;
+    const { id_rol, entidad, id_modulo, created, read, updatePerm, deletePerm, exportPerm, printPerm  } = req.body;
 
-    if (!nombre) {
+    if (!entidad) {
         const camposFaltantes = [];
         if (!descripcion) camposFaltantes.push('Nombre');
         return res.status(400).json({ error: `Los siguientes campos son obligatorios: ${camposFaltantes.join(', ')}.` });
     }
 
     try {
-        const data = await Permisos.addPermisos({ nombre, estado });
+        const data = await Permisos.addPermisos({ id_rol, entidad, id_modulo, created, read, updatePerm, deletePerm, exportPerm, printPerm });
         if (data.error) {
             return res.status(400).json({ error: data.error });
         }
@@ -38,11 +38,11 @@ export const getPermisos = async (req, res) => {
 
 export const updatePermisosById = async (req, res) => {
   const permisoId = req.params.permisoId;
-  const { nombre, estado  } = req.body;
+  const { id_rol, entidad, id_modulo, created, read, updatePerm, deletePerm, exportPerm, printPerm  } = req.body;
 
   try {
 
-    const updated = await Permisos.updatPermiso(permisoId, { nombre, estado });
+    const updated = await Permisos.updatPermiso(permisoId, { id_rol, entidad, id_modulo, created, read, updatePerm, deletePerm, exportPerm, printPerm });
 
     res.status(200).json({ message: 'Permiso actualizado correctamente' });
   } catch (error) {

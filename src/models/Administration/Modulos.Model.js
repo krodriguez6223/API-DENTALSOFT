@@ -12,7 +12,7 @@ async function addModulos(Data) {
     }
     await conexion.query('BEGIN');
 
-    const query = ` INSERT INTO administracion.modulo (nombre, descripcion, url, pathruta, estado, fechacreacion) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *; `;
+    const query = ` INSERT INTO administracion.modulo (nombre, descripcion, url, pathruta, estado, fechacreacion) VALUES ($1, $2, $3, $4, $5, NOW()::timestamp(0)) RETURNING *; `;
     const result = await conexion.query(query, [nombre, descripcion, url, pathruta, estado ]);
 
     await conexion.query('COMMIT');
@@ -83,7 +83,7 @@ export const updatRoles = async (ModulosId, updatedData) => {
     if (duplicateResult.rows.length > 0) {
       throw new Error('Nombre del modulo ya existe, por favor ingrese un nombre de modulo diferente');
     }
-    const query = ` UPDATE administracion.modulo  SET   nombre = $2,  descripcion = $3, url = $4,  pathruta = $5, estado=$6 , fechamodificacion= NOW()  WHERE id = $1 `;
+    const query = ` UPDATE administracion.modulo  SET   nombre = $2,  descripcion = $3, url = $4,  pathruta = $5, estado=$6 , fechamodificacion= NOW()::timestamp(0)  WHERE id = $1 `;
 
     await conexion.query(query, [ModulosId, nombre, descripcion, url, pathruta, estado]);
 

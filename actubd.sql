@@ -646,3 +646,19 @@ ON UPDATE NO ACTION
 ON DELETE NO ACTION;
 
 
+----------------------sql 10/11/2024
+CREATE TABLE IF NOT EXISTS administracion.auditoria_permisos (
+    id_auditoria SERIAL PRIMARY KEY,
+    id_permiso INTEGER NOT NULL,
+    id_usuario INTEGER NOT NULL,
+    accion VARCHAR(50) NOT NULL, -- Por ejemplo, 'CREAR', 'MODIFICAR', 'ELIMINAR'
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_id_permiso FOREIGN KEY (id_permiso)
+        REFERENCES administracion.permisos (id_permiso) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_usuario_accion FOREIGN KEY (id_usuario)
+        REFERENCES administracion.usuario (id_usuario) ON UPDATE CASCADE ON DELETE SET NULL
+);
+ALTER TABLE administracion.modulo 
+ADD COLUMN modulo_padre_id INTEGER,
+ADD CONSTRAINT fk_modulo_padre FOREIGN KEY (modulo_padre_id) 
+REFERENCES administracion.modulo(id) ON UPDATE CASCADE ON DELETE SET NULL;
