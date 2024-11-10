@@ -13,6 +13,7 @@ import authRoute from './routes/Administration/auth.routes.js'
 import detCatalogoRoute from './routes/Administration/catalogo.routes.js'
 import catalogoRoute from './routes/Administration/catalogo.routes.js'
 import modulosRoute from './routes/Administration/modulos.routes.js'
+import permisosRoute from './routes/Administration//permisos.routes.js'
 
 
 const app = express()
@@ -40,6 +41,7 @@ app.use('/catalogo',catalogoRoute)
 app.use('/detallecatalogo',detCatalogoRoute)
 app.use('/cedula',consultaCedula)
 app.use('/modulos', modulosRoute)
+app.use('/permisos', permisosRoute)
 
 
 
