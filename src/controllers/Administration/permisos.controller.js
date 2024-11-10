@@ -42,7 +42,7 @@ export const updatePermisosById = async (req, res) => {
 
   try {
 
-    const updated = await Permisos.updatRoles(permisoId, { nombre, estado });
+    const updated = await Permisos.updatPermiso(permisoId, { nombre, estado });
 
     res.status(200).json({ message: 'Permiso actualizado correctamente' });
   } catch (error) {
