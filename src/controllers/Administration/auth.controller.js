@@ -1,5 +1,5 @@
-import { signin } from '../models/auth.model.js';
-import { isTokenExpired } from '../helpers/funciones.js';
+import { signin } from '../../models/Administration/auth.model.js';
+import { isTokenExpired } from '../../helpers/funciones.js';
 
 export const signIn = async (req, res) => {
   const { nombre_usuario, contrasenia } = req.body;

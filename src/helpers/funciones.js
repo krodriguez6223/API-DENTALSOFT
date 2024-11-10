@@ -20,31 +20,9 @@ export const isTokenExpired = (token) => {
   });
 };
 
-//funcion para validar cuando el numero de transacion de una transferencia esta duplicada
-export async function existeNumTransaccion(numtransaccion) {
-    const operacion = await pool.connect();
-    try {
-        const existeTransaccion = await operacion.query('SELECT id_operacion FROM operaciones WHERE numtransaccion = $1', [numtransaccion]);
-        if (existeTransaccion.rows.length > 0) {
-            return existeTransaccion.rows[0].id_operacion;
-        } else {
-            return null;
-        }
-    } finally {
-        operacion.release();
-    }
-}
 
-// En el modelo de entidad bancaria (por ejemplo)
-export async function obtenerSobregiroPermitido(id_entidadbancaria) {
-    const entidadBancariaQuery = await pool.query(`
-      SELECT sobregiro FROM entidadbancaria WHERE id_entidadbancaria = $1`, [id_entidadbancaria]);
-        if (entidadBancariaQuery.rows.length === 0) {
-      return null; 
-    }
-    
-    return entidadBancariaQuery.rows[0].sobregiro;
-  }
+
+
 export async function consultarClienteAPI(nident) {
     try {
         const response = await axios.post(
@@ -69,4 +47,4 @@ export async function consultarClienteAPI(nident) {
 }
 
 
-export default { isTokenExpired, existeNumTransaccion, obtenerSobregiroPermitido, consultarClienteAPI }
+export default { isTokenExpired,  consultarClienteAPI }

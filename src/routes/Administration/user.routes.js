@@ -1,8 +1,8 @@
 import { Router } from "express";
 
 const router = Router()
-import * as userCtrl from '../controllers/user.controller.js'//importa todos mis controladores de la ruta 
-import { verifyToken, verifyEmpleado } from "../middlewares/auth.jwt.js";
+import * as userCtrl from '../../controllers/Administration/user.controller.js'//importa todos mis controladores de la ruta 
+import { verifyToken } from "../../middlewares/auth.jwt.js";
 
 
 router.post('/',[verifyToken], userCtrl.createUser)

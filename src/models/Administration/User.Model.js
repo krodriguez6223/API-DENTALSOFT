@@ -1,8 +1,7 @@
-
-import pool from '../database.js';
+import pool from '../../database.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import config from '../config.js';
+import config from '../../config.js';
 
 
 // Función para agregar un nuevo usuario
@@ -28,8 +27,9 @@ async function addUser(User, Persona, id_rol) {
       SELECT u.*
       FROM administracion.usuario u
       LEFT JOIN administracion.persona p ON u.persona_id = p.id_persona
-      WHERE p.cedula = $1 AND (u.estado = true OR u.estado IS NULL)
+      WHERE p.cedula = $1 
     `;
+    /*AND (u.estado = true OR u.estado IS NULL)*/
     const existingCedulaResult = await user.query(existingCedulaQuery, [cedula]);
 
     if (existingCedulaResult.rows.length > 0) {
@@ -128,10 +128,9 @@ async function getAllUsers() {
 
 
 // funcion para obtener un usuario por su ID
-export const getUserId = async (req, res) => {
+export const getUserId = async (userId) => {
   try {
-    const userId = req.params.userId;
-    const usuario = await pool.connect();
+    const connection  = await pool.connect();
     const query = `
       SELECT 
         u.*, 
@@ -150,64 +149,80 @@ export const getUserId = async (req, res) => {
       WHERE 
         u.id_usuario = $1;
     `;
-    const result = await usuario.query(query, [userId]);
-    usuario.release();
+    const result = await connection.query(query, [userId]);
+    connection.release();
+
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+      return null;
     }
-    res.status(200).json(result.rows[0]);
+    return result.rows[0];
   } catch (error) {
     console.error('Error al obtener el usuario por ID:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    throw error;  
   }
 }
+const checkIfExists = async (usuario, query, values) => {
+  const { rows } = await usuario.query(query, values);
+  return rows.length > 0;
+};
 
-//funcion para actualizar un usuario
+//ACTUALIZAR UN USUARIO
 export const updateUser = async (userId, updatedData) => {
   const { nombre_usuario, contrasenia, estado, id_rol, persona, caja_id } = updatedData;
   const usuario = await pool.connect();
 
   try {
-    // Iniciar una transacción
     await usuario.query('BEGIN');
 
-    // Obtener la contraseña actual del usuario
-    const { rows } = await usuario.query('SELECT contrasenia FROM administracion.usuario WHERE id_usuario = $1', [userId]);
-    const { contrasenia: currentPassword } = rows[0] || {}; // Obtener la contraseña actual o establecerla como nula si no hay resultados
+    const isUsernameTaken = await checkIfExists(usuario, `
+      SELECT 1 FROM administracion.usuario WHERE nombre_usuario = $1 AND id_usuario != $2
+    `, [nombre_usuario, userId]);
 
-    // Encriptar la nueva contraseña si se proporciona y no está vacía
-    let hashedPassword = currentPassword; // Por defecto, mantener la contraseña actual
+    if (isUsernameTaken) {
+      throw new Error('El nombre de usuario ya está en uso.');
+    }
+
+    const isCedulaRegistered = await checkIfExists(usuario, `
+      SELECT 1 FROM administracion.usuario u
+      LEFT JOIN administracion.persona p ON u.persona_id = p.id_persona
+      WHERE p.cedula = $1 AND u.id_usuario != $2
+    `, [persona.cedula, userId]);
+
+    if (isCedulaRegistered) {
+      throw new Error('Cédula ya registrada, la cédula ya pertenece a un usuario registrado.');
+    }
+
+    const { rows } = await usuario.query('SELECT contrasenia FROM administracion.usuario WHERE id_usuario = $1', [userId]);
+    let hashedPassword = rows[0]?.contrasenia;
+
     if (contrasenia && contrasenia.trim() !== "") {
       hashedPassword = await bcrypt.hash(contrasenia, 10);
     }
 
-    // Actualizar datos de usuario si se proporcionan
-    if (nombre_usuario || contrasenia || estado) {
-      const userQuery = 'UPDATE administracion.usuario SET nombre_usuario = $1, contrasenia = $2, estado = $3, caja_id = $4 WHERE id_usuario = $5';
-      await usuario.query(userQuery, [nombre_usuario, hashedPassword, estado, caja_id, userId]);
-    }
+    const userQuery = `
+      UPDATE administracion.usuario 
+      SET nombre_usuario = $1, contrasenia = $2, estado = $3, caja_id = $4 
+      WHERE id_usuario = $5
+    `;
+    await usuario.query(userQuery, [nombre_usuario, hashedPassword, estado, caja_id, userId]);
 
-    // Actualizar rol del usuario si se proporciona id_rol
     if (id_rol) {
-      const userRoleQuery = 'UPDATE administracion.usuario_rol SET id_rol = $1 WHERE id_usuario = $2';
-      await usuario.query(userRoleQuery, [id_rol, userId]);
+      await usuario.query(`
+        UPDATE administracion.usuario_rol SET id_rol = $1 WHERE id_usuario = $2
+      `, [id_rol, userId]);
     }
 
-    // Actualizar datos de persona si se proporcionan
-    if (persona) {
-      const { nombre, apellido, fecha_nacimiento, direccion, telefono, cedula } = persona;
-      const personaQuery = 'UPDATE administracion.persona SET nombre = $1, apellido = $2, fecha_nacimiento = $3, direccion = $4, telefono = $5, cedula= $6  WHERE id_persona = (SELECT persona_id FROM administracion.usuario WHERE id_usuario = $7)';
-      await usuario.query(personaQuery, [nombre, apellido, fecha_nacimiento, direccion, telefono, cedula, userId]);
-    }
+    const { nombre, apellido, fecha_nacimiento, direccion, telefono, cedula } = persona;
+    const personaQuery = `
+      UPDATE administracion.persona 
+      SET nombre = $1, apellido = $2, fecha_nacimiento = $3, direccion = $4, telefono = $5, cedula = $6
+      WHERE id_persona = (SELECT persona_id FROM administracion.usuario WHERE id_usuario = $7)
+    `;
+    await usuario.query(personaQuery, [nombre, apellido, fecha_nacimiento, direccion, telefono, cedula, userId]);
 
-    // Commit la transacción
     await usuario.query('COMMIT');
-
-    return true; // Éxito en la actualización
+    return { success: true };
   } catch (error) {
-    console.error('Error al actualizar el usuario:', error);
-
-    // Rollback en caso de error
     await usuario.query('ROLLBACK');
     throw error;
   } finally {
@@ -291,7 +306,6 @@ export const updateCajaById = async (cajaId, newData) => {
 
 //FUNCION PARA ELIMINAR USUARIO
 export const deleteUser = async (userDeleteId, newData) => {
- // console.log('resultado modelo', newData)
   try {
     const client = await pool.connect();
     const query = 'UPDATE usuario SET estado = $1  WHERE id_usuario = $2';

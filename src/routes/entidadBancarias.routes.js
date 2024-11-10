@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router()
 import * as entidadBancariaCtrl from '../controllers/entidadBancaria.controller.js'//importa todos mis controladores de la ruta producto
-import { verifyToken,  verifyEmpleado } from "../middlewares/auth.jwt.js";
+import { verifyToken } from "../middlewares/auth.jwt.js";
 
 
 router.post('/', [ verifyToken ], entidadBancariaCtrl.createEntidadBancaria)

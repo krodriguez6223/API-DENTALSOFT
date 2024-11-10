@@ -1,8 +1,8 @@
-import pool from '../database.js';
+import pool from '../../database.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import config from '../config.js';
-import { isTokenExpired } from '../helpers/funciones.js';
+import config from '../../config.js';
+import { isTokenExpired } from '../../helpers/funciones.js';
 
 export const signin = async (username, password) => {
     const user = await pool.connect();
@@ -30,7 +30,7 @@ export const signin = async (username, password) => {
         
         // Generar token JWT con la información del usuario, incluyendo el ID de usuario
         const token = jwt.sign({ userId: userData.id_usuario, nombre_usuario: userData.nombre_usuario, caja_id: userData.caja_id }, config.SECRET, {
-            expiresIn: 60 * 60 * 24 // 1 día
+            expiresIn: 300000 
         });
 
         // Verificar si el token ha caducado

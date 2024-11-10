@@ -3,7 +3,7 @@ import { Router } from "express";
 const router = Router()
 
 import * as operacionesCtrl from '../controllers/operaciones.controller.js'//importa todos mis controladores de la ruta producto
-import { verifyToken, verifyPermissions, verifyEmpleado } from "../middlewares/auth.jwt.js";
+import { verifyToken, verifyPermissions,  } from "../middlewares/auth.jwt.js";
 
 
 router.post('/', [verifyToken, verifyPermissions], operacionesCtrl.createOperaciones)

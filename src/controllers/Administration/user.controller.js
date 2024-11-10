@@ -1,10 +1,9 @@
+import User from '../../models/Administration/User.Model.js';
 
-import User from '../models/User.Model.js';
-
-import { getUserId } from '../models/User.Model.js';
-import { updateUser } from '../models/User.Model.js';
-import { deleteUser } from '../models/User.Model.js';
-import { updateCajaById } from '../models/User.Model.js';
+import { getUserId } from '../../models/Administration/User.Model.js';
+import { updateUser } from '../../models/Administration/User.Model.js';
+import { deleteUser } from '../../models/Administration/User.Model.js';
+import { updateCajaById } from '../../models/Administration/User.Model.js';
 
 
 export const createUser = async (req, res) => {
@@ -23,66 +22,59 @@ if (!nombre_usuario || !contrasenia || !cedula || !nombre || !apellido ) {
 }
 
   try {
-    // Llama a la función addUser con los parámetros proporcionados
     const userSave = await User.addUser({ nombre_usuario, contrasenia, estado },{ nombre, apellido, fecha_nacimiento, direccion, telefono, cedula }, id_rol);
-    // Verificar si la función addUser devolvió un error relacionado con la cédula ya registrada
     if (userSave.error) {
-      return res.status(400).json({ error: userSave.error }); // Devolver código de estado 401
+      return res.status(400).json({ error: userSave.error }); 
     }
-
-    res.status(201).json(userSave);
+    res.status(201).json({message: 'Usuario agregado exitosamente', userSave});
   } catch (error) {
-    // Manejar otros errores
     if (error.message === 'El nombre de usuario ya está en uso.' || error.message === 'El rol seleccionado no está registrado. ') {
       return res.status(400).json({ error: error.message });
     }
-    console.error('Error al crear usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-//funcion para obtener todos los usuarios
 export const getUsers = async (req, res) => {
     try{
        const users = await User.getAllUsers();
 
        res.status(200).json(users)
     } catch(error){
-      console.error('Error al obtener usuarios:', error);
       res.status(500).json({ error: 'Error interno del servidors' });
     }
 }
 
 //funcion para obtener un usuario en especifico
 export const getUserById = async (req, res) => {
-    try {
-      const usuario = await getUserId(req, res);
-      res.status(200).json(usuario)
-    } catch (error){
-      console.error('Error al obtener el usuario por ID:', error);
-      res.status(500).json({ error: 'Error interno del seervidor' });
+  try {
+    const user = await getUserId(req.params.userId); // No pasar 'res'
+    
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
     }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error al obtener el cliente por ID:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 }
+
 //funcion para actulizar el usuario
 
 export const updateUserById = async (req, res) => {
   const userId = req.params.userId;
   const { nombre_usuario, contrasenia, estado, id_rol, nombre, apellido, fecha_nacimiento, direccion, telefono, cedula, caja_id } = req.body;
-  
-  try {
-    // Crear el objeto persona con los datos formateados
-    const persona = { nombre, apellido, fecha_nacimiento, direccion, telefono, cedula };
-    // Llamar a updateUser con los datos actualizados, incluyendo el id_rol y los datos de persona
-    const updated = await updateUser(userId, { nombre_usuario, contrasenia, estado, id_rol, persona, caja_id });
 
-    if (!updated) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
+  try {
+    const persona = { nombre, apellido, fecha_nacimiento, direccion, telefono, cedula };
+    const updated = await updateUser(userId, { nombre_usuario, contrasenia, estado, id_rol, persona, caja_id });
 
     res.status(200).json({ message: 'Usuario actualizado correctamente' });
   } catch (error) {
-    console.error('Error al actualizar el usuario:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    const statusCode = ['El nombre de usuario ya está en uso.', 'Cédula ya registrada'].includes(error.message) ? 400 : 500;
+    res.status(statusCode).json({ error: error.message });
   }
 };
 
@@ -112,7 +104,7 @@ export const createCaja = async (req, res) => {
   } catch (error) {
     console.error('Error al crear caja:', error);
 
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error interno del servidor.' });
   }
 };
 
@@ -182,8 +174,8 @@ export const deleteUserById = async (req, res) => {
    res.status(200).json({ message: 'Usuario desactivado correctamente' });
   }     
  } catch (error) {
-  // console.error('Error al inactivar el usuario por ID:', error);
-   res.status(500).json({ error: 'Error interno del servidor' });
+ // console.error('Error al inactivar el usuario por ID:', error);
+   res.status(500).json({ error: 'Error interno del servidor..' });
  }
 }
 

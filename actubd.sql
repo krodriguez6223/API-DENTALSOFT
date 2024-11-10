@@ -564,3 +564,85 @@ CREATE TABLE IF NOT EXISTS public.permisos
     FOREIGN KEY (id_rol) REFERENCES rol(id_rol),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
 );
+
+
+/*------------------base de datos nuevos sql octubre 2024---------------------------*/
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'catalogo_id_seq') THEN
+        CREATE SEQUENCE administracion.catalogo_id_seq;
+    END IF;
+END $$;
+
+CREATE TABLE IF NOT EXISTS administracion.catalogo
+(
+    id integer NOT NULL DEFAULT nextval('administracion.catalogo_id_seq'::regclass),
+    descripcion text COLLATE pg_catalog."default",
+    estado boolean NOT NULL,
+    fechacreacion timestamp without time zone NOT NULL,
+    fechamodificacion timestamp without time zone,
+    usuariocreacion_id integer,
+    usuariomodificacion_id integer,
+    CONSTRAINT catalogo_pk PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS general.catalogo
+    OWNER to postgres;
+----------------------------------
+
+
+---kelvin 28-10-2024
+-- Agregar nuevas columnas a la tabla persona
+
+ALTER TABLE administracion.persona
+ADD COLUMN correopersonal character varying(300) COLLATE pg_catalog."default",
+ADD COLUMN correoinstitucional character varying(300) COLLATE pg_catalog."default",
+ADD COLUMN observacion character varying(300) COLLATE pg_catalog."default",
+ADD COLUMN estado boolean NOT NULL DEFAULT true,  -- Por defecto como 'true'
+ADD COLUMN foto bytea,
+ADD COLUMN cat_tipoidentificacion_id integer NOT NULL DEFAULT 1,
+ADD COLUMN cat_estadocivil integer,
+ADD COLUMN cat_ciudad integer,
+ADD COLUMN cat_sexo integer;
+
+-- Crear claves foráneas
+ALTER TABLE administracion.persona
+ADD CONSTRAINT fk_ciudad_001 FOREIGN KEY (cat_ciudad)
+    REFERENCES administracion.detallecatalogo (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+ALTER TABLE administracion.persona
+ADD CONSTRAINT fk_detallecatalogo_estadocivil_001 FOREIGN KEY (cat_estadocivil)
+    REFERENCES administracion.detallecatalogo (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+ALTER TABLE administracion.persona
+ADD CONSTRAINT fk_detallecatalogo_sexo_001 FOREIGN KEY (cat_sexo)
+    REFERENCES administracion.detallecatalogo (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+ALTER TABLE administracion.persona
+ADD CONSTRAINT fk_detallecatalogo_tip_identif_003 FOREIGN KEY (cat_tipoidentificacion_id)
+    REFERENCES administracion.detallecatalogo (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+--------------------------
+
+-- Agregar nuevas columnas
+ALTER TABLE administracion.cliente
+ADD COLUMN estado BOOLEAN NOT NULL DEFAULT true,
+ADD COLUMN persona_id INTEGER;
+
+-- Agregar la restricción de clave foránea
+ALTER TABLE administracion.cliente
+ADD CONSTRAINT fk_persona_001 FOREIGN KEY (persona_id)
+REFERENCES administracion.persona (id_persona)
+ON UPDATE NO ACTION
+ON DELETE NO ACTION;
+
+
