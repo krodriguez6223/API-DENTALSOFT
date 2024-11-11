@@ -3,7 +3,7 @@ import pool from '../../database.js';
 async function addModulos(Data) {
   const conexion = await pool.connect();
   try {
-    const { nombre, descripcion, url, pathruta, estado } = Data;
+    const { nombre, descripcion, ruta, estado } = Data;
 
     const existingDataQuery = ` SELECT id FROM administracion.modulo WHERE nombre = $1 `;
     const existingDataResult = await conexion.query(existingDataQuery, [nombre]);
@@ -12,15 +12,15 @@ async function addModulos(Data) {
     }
     await conexion.query('BEGIN');
 
-    const query = ` INSERT INTO administracion.modulo (nombre, descripcion, url, pathruta, estado, fechacreacion) VALUES ($1, $2, $3, $4, $5, NOW()::timestamp(0)) RETURNING *; `;
-    const result = await conexion.query(query, [nombre, descripcion, url, pathruta, estado ]);
+    const query = ` INSERT INTO administracion.modulo (nombre, descripcion, ruta, estado, fechacreacion) VALUES ($1, $2, $3, $4, NOW()::timestamp(0)) RETURNING *; `;
+    const result = await conexion.query(query, [nombre, descripcion, ruta, estado ]);
 
     await conexion.query('COMMIT');
 
     return { conexion: result.rows[0] };
   } catch (error) {
     await conexion.query('ROLLBACK');
-    console.error('Error al insertar el catálogo:', error);
+    console.error('Error al insertar el modulo:', error);
     throw error;
   } finally {
     conexion.release();
@@ -39,34 +39,8 @@ export async function getAllModulosModel() {
   }
 }
 
-
-// funcion para obtener un catalogo por su ID
-export const geRolesId = async (RolesId) => {
-  /*try {
-    const connection = await pool.connect();
-
-    const query = `
-     SELECT id, descripcion, estado, fechacreacion, fechamodificacion, usuariocreacion_id, usuariomodificacion_id
-	   FROM administracion.catalogo
-     WHERE id = $1;
-    `;
-
-    const result = await connection.query(query, [CatalogoId]);
-    connection.release();
-
-    if (result.rows.length === 0) {
-      return null;
-    }
-    return result.rows[0];
-  } catch (error) {
-    console.error('Error al obtener el cliente por ID:', error);
-    throw error;  // Lanza el error para que lo maneje el controlador
-  }*/
-
-};
-
-export const updatRoles = async (ModulosId, updatedData) => {
-  const { nombre, descripcion, url, pathruta, estado } = updatedData;
+export const updatModulo = async (ModulosId, updatedData) => {
+  const { nombre, descripcion, ruta, estado } = updatedData;
   const conexion = await pool.connect();
 
   try {
@@ -83,9 +57,9 @@ export const updatRoles = async (ModulosId, updatedData) => {
     if (duplicateResult.rows.length > 0) {
       throw new Error('Nombre del modulo ya existe, por favor ingrese un nombre de modulo diferente');
     }
-    const query = ` UPDATE administracion.modulo  SET   nombre = $2,  descripcion = $3, url = $4,  pathruta = $5, estado=$6 , fechamodificacion= NOW()::timestamp(0)  WHERE id = $1 `;
+    const query = ` UPDATE administracion.modulo  SET   nombre = $2,  descripcion = $3, ruta = $4, estado=$5 , fechamodificacion= NOW()::timestamp(0)  WHERE id = $1 `;
 
-    await conexion.query(query, [ModulosId, nombre, descripcion, url, pathruta, estado]);
+    await conexion.query(query, [ModulosId, nombre, descripcion, ruta, estado]);
 
     await conexion.query('COMMIT');
     return { success: true };
@@ -97,4 +71,4 @@ export const updatRoles = async (ModulosId, updatedData) => {
   }
 };
 
-  export default {addModulos, getAllModulosModel, geRolesId, updatRoles }
+  export default {addModulos, getAllModulosModel,  updatModulo }

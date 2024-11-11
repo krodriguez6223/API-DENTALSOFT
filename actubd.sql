@@ -662,3 +662,31 @@ ALTER TABLE administracion.modulo
 ADD COLUMN modulo_padre_id INTEGER,
 ADD CONSTRAINT fk_modulo_padre FOREIGN KEY (modulo_padre_id) 
 REFERENCES administracion.modulo(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+-- Table: administracion.modulo
+
+-- DROP TABLE IF EXISTS administracion.modulo;
+
+CREATE TABLE IF NOT EXISTS administracion.modulo
+(
+    id integer NOT NULL DEFAULT nextval('administracion.modulo_id_seq'::regclass),
+    nombre character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    descripcion character varying(150) COLLATE pg_catalog."default" NOT NULL,
+    submodulo character varying(100) COLLATE pg_catalog."default",
+    ruta character varying(50) COLLATE pg_catalog."default",
+    estado boolean NOT NULL,
+    fechacreacion timestamp without time zone NOT NULL,
+    fechamodificacion timestamp without time zone,
+    usuariocreacion_id integer,
+    usuariomodificacion_id integer,
+    CONSTRAINT pk_modulo PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS administracion.modulo
+    OWNER to postgres;
+
+
+ ALTER TABLE IF EXISTS administracion.modulo
+drop column submodulo   

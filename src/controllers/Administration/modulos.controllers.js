@@ -3,7 +3,7 @@ import Modulo from '../../models/Administration/Modulos.Model.js';
 
 
 export const createModulos = async (req, res) => {
-    const { nombre, descripcion, url, pathruta, estado  } = req.body;
+    const { nombre, descripcion, ruta, estado  } = req.body;
 
     if (!nombre) {
         const camposFaltantes = [];
@@ -12,7 +12,7 @@ export const createModulos = async (req, res) => {
     }
 
     try {
-        const data = await Modulo.addModulos({  nombre, descripcion, url, pathruta, estado });
+        const data = await Modulo.addModulos({  nombre, descripcion, ruta, estado });
         if (data.error) {
             return res.status(400).json({ error: data.error });
         }
@@ -38,11 +38,11 @@ export const getModulos = async (req, res) => {
 
 export const updateModulosById = async (req, res) => {
   const moduloId = req.params.moduloId;
-  const {  nombre, descripcion, url, pathruta, estado  } = req.body;
+  const {  nombre, descripcion, ruta, estado  } = req.body;
 
   try {
 
-    const updated = await Modulo.updatRoles(moduloId, { nombre, descripcion, url, pathruta, estado });
+    const updated = await Modulo.updatModulo(moduloId, { nombre, descripcion, ruta, estado });
 
     res.status(200).json({ message: 'Modulo actualizado correctamente' });
   } catch (error) {
