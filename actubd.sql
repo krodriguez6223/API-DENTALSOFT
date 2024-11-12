@@ -689,4 +689,19 @@ ALTER TABLE IF EXISTS administracion.modulo
 
 
  ALTER TABLE IF EXISTS administracion.modulo
-drop column submodulo   
+drop column submodulo  
+
+CREATE TABLE IF NOT EXISTS administracion.submodulo (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(150) NOT NULL,
+    ruta VARCHAR(50),
+    estado BOOLEAN NOT NULL,
+    fechacreacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fechamodificacion TIMESTAMP,
+    usuariocreacion_id INTEGER,
+    usuariomodificacion_id INTEGER,
+    modulo_id INTEGER NOT NULL,
+    CONSTRAINT fk_submodulo_modulo FOREIGN KEY (modulo_id)
+        REFERENCES administracion.modulo (id) ON UPDATE CASCADE ON DELETE RESTRICT
+);

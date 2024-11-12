@@ -3,9 +3,9 @@ import { Router } from "express";
 const router = Router()
 import * as catalogoCtrl from '../../controllers/Administration/catalogo.controller.js' 
 import { verifyToken } from "../../middlewares/auth.jwt.js";
+import { checkPermissions } from "../../middlewares/permissions.js";
 
-
-router.post('/',[verifyToken], catalogoCtrl.createCatalogo)
+router.post('/',[verifyToken, checkPermissions('catalogo')], catalogoCtrl.createCatalogo)
 router.get('/detalle',[verifyToken], catalogoCtrl.getDetCatalogo)
 router.get('/',[verifyToken], catalogoCtrl.getCatalogo)
 router.get('/:catalogoId',[verifyToken], catalogoCtrl.getCatalogoById)
