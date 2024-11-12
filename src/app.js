@@ -15,6 +15,9 @@ import catalogoRoute from './routes/Administration/catalogo.routes.js'
 import modulosRoute from './routes/Administration/modulos.routes.js'
 import permisosRoute from './routes/Administration//permisos.routes.js'
 
+import { checkPermissions } from './middlewares/permissions.js';
+
+
 
 const app = express()
 
@@ -37,7 +40,10 @@ app.use('/roles',roles)
 app.use('/users',usersRoute)
 app.use('/clientes',clientesRoute)
 app.use('/auth',authRoute)
-app.use('/catalogo',catalogoRoute)
+app.use('/catalogo', (req, res, next) => {
+    checkPermissions('/catalogo')(req, res, next); // Check permission for catalogo module
+});
+
 app.use('/detallecatalogo',detCatalogoRoute)
 app.use('/cedula',consultaCedula)
 app.use('/modulos', modulosRoute)
