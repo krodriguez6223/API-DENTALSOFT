@@ -9,7 +9,7 @@ const router = Router();
 // Función para crear rutas dinámicamente
 const createRoutes = (moduleConfig) => {
     // Ruta principal del módulo
-    router.post(moduleConfig.path, [verifyToken, checkPermissions(moduleConfig.path)], catalogoCtrl.createCatalogo);
+    router.post(moduleConfig.path, [verifyToken, checkPermissions(moduleConfig.name)], catalogoCtrl.createCatalogo);
     router.get(moduleConfig.path, [verifyToken, checkPermissions(moduleConfig.path)], catalogoCtrl.getCatalogo);
     router.get(`${moduleConfig.path}/:catalogoId`, [verifyToken, checkPermissions(moduleConfig.path)], catalogoCtrl.getCatalogoById);
     router.put(`${moduleConfig.path}/:catalogoId`, [verifyToken, checkPermissions(moduleConfig.path)], catalogoCtrl.updateCatalogoById);

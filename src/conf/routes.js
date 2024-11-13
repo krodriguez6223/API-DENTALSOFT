@@ -1,18 +1,14 @@
 // config/routes.js
 const routesConfig = {
     catalogo: {
-        path: 'catalogo',
+        path: '/',
+        name:'/catalogo',
         submodules: {
             detalleCatalogo: '/catalogo/detallecatalogo',
             otraRuta: '/catalogo/otraRuta',
         },
     },
-    usuario: {
-        path: '/usuario',
-        submodules: {
-            detalleUsuario: '/usuario/detalle',
-        },
-    },
+
     
 };
 

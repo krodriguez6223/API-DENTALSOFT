@@ -13,7 +13,6 @@ const permissionActions = {
     'PRINT': 'print'
 };
 
-
 export const checkPermissions = (modulePath, submodulePath = null) => {
     return async (req, res, next) => {
         try {
@@ -21,11 +20,10 @@ export const checkPermissions = (modulePath, submodulePath = null) => {
             const decoded = jwt.verify(token, config.SECRET); 
             const userId = decoded.userId;
             const action = permissionActions[req.method]; 
-
             if (!action) {
                 return res.status(405).json({ message: 'Método no permitido' });
-            }
-            
+            }    
+
             let query = `
                 SELECT p.*
                 FROM administracion.permisos AS p
@@ -41,11 +39,9 @@ export const checkPermissions = (modulePath, submodulePath = null) => {
             
             const params = submodulePath ? [userId, modulePath, submodulePath] : [userId, modulePath];
             const result = await pool.query(query, params);
-
             if (!result.rows.length || !result.rows[0][action]) {
                 return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
             }
-
             next();  
         } catch (error) {
             console.error(error);

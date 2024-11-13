@@ -40,10 +40,7 @@ app.use('/roles',roles)
 app.use('/users',usersRoute)
 app.use('/clientes',clientesRoute)
 app.use('/auth',authRoute)
-app.use('/catalogo', (req, res, next) => {
-    checkPermissions('/catalogo')(req, res, next); // Check permission for catalogo module
-});
-
+app.use('/catalogo',catalogoRoute);
 app.use('/detallecatalogo',detCatalogoRoute)
 app.use('/cedula',consultaCedula)
 app.use('/modulos', modulosRoute)
