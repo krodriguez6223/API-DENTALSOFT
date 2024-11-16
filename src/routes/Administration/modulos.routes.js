@@ -1,15 +1,25 @@
 import { Router } from "express";
+import routesConfig from '../../conf/routes.js';
+import * as modulosCtrl from '../../controllers/Administration/modulos.controllers.js'
+import { verifyToken } from "../../middlewares/auth.jwt.js";
+import { checkPermissions } from "../../middlewares/permissions.js";
+
 
 const router = Router()
 
-import * as modulosCtrl from '../../controllers/Administration/modulos.controllers.js'//importa todos mis controladores de la ruta producto
-import { verifyToken } from "../../middlewares/auth.jwt.js";
+const createRoutes = (moduleConfig) => {
+    const { path, name, id } = moduleConfig;
 
-router.post('/',[verifyToken],modulosCtrl.createModulos)
-router.get('/',[verifyToken], modulosCtrl.getModulos)
-router.put('/:moduloId',[verifyToken], modulosCtrl.updateModulosById)
-router.get('/:moduloId',[verifyToken], modulosCtrl.getModulosById)
+    router.post(path, [verifyToken, checkPermissions(name, id)], modulosCtrl.createModulos)
+    router.get(path, [verifyToken, checkPermissions(name, id)], modulosCtrl.getModulos)
+    router.put(`${path}:moduloId`, [verifyToken, checkPermissions(name, id)], modulosCtrl.updateModulosById)
+    router.get(`${path}/:moduloId`, [verifyToken, checkPermissions(name, id)], modulosCtrl.getModulosById)
 
+};
+
+Object.values(routesConfig).forEach(moduleConfig => {
+    createRoutes(moduleConfig);
+});
 
 
 

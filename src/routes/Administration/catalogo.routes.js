@@ -1,34 +1,32 @@
 import { Router } from "express";
-import routesConfig from '../../conf/routes.js';  // Importa la configuración de rutas
+import routesConfig from '../../conf/routes.js';
 import * as catalogoCtrl from '../../controllers/Administration/catalogo.controller.js';
 import { verifyToken } from "../../middlewares/auth.jwt.js";
 import { checkPermissions } from "../../middlewares/permissions.js";
 
 const router = Router();
 
-// Función para crear rutas dinámicamente
 const createRoutes = (moduleConfig) => {
-    // Ruta principal del módulo
-    router.post(moduleConfig.path, [verifyToken, checkPermissions(moduleConfig.name)], catalogoCtrl.createCatalogo);
-    router.get(moduleConfig.path, [verifyToken, checkPermissions(moduleConfig.path)], catalogoCtrl.getCatalogo);
-    router.get(`${moduleConfig.path}/:catalogoId`, [verifyToken, checkPermissions(moduleConfig.path)], catalogoCtrl.getCatalogoById);
-    router.put(`${moduleConfig.path}/:catalogoId`, [verifyToken, checkPermissions(moduleConfig.path)], catalogoCtrl.updateCatalogoById);
+    const { path, name, id } = moduleConfig;
 
-    // Crear rutas para submódulos si existen
-    if (moduleConfig.submodules) {
-        Object.keys(moduleConfig.submodules).forEach(submoduleKey => {
-            const submodulePath = moduleConfig.submodules[submoduleKey];
-            router.post(submodulePath, [verifyToken, checkPermissions(moduleConfig.path, submodulePath)], catalogoCtrl.createDetCatalogo);
-            router.get(submodulePath, [verifyToken, checkPermissions(moduleConfig.path, submodulePath)], catalogoCtrl.getDetCatalogo);
-            router.get(`${submodulePath}/:detallecatalogoId`, [verifyToken, checkPermissions(moduleConfig.path, submodulePath)], catalogoCtrl.getDetCatalogoById);
-            router.put(`${submodulePath}/:detallecatalogoId`, [verifyToken, checkPermissions(moduleConfig.path, submodulePath)], catalogoCtrl.updateDetCatalogoById);
-        });
-    }
+    // Rutas para el submodulo (catalogo)   
+    router.post(path, [verifyToken, checkPermissions(name, id)], catalogoCtrl.createCatalogo);
+    router.get(path, [verifyToken, checkPermissions(name, id)], catalogoCtrl.getCatalogo);
+    router.get(`${path}/:catalogoId`, [verifyToken, checkPermissions(name, id)], catalogoCtrl.getCatalogoById);
+    router.put(`${path}/:catalogoId`, [verifyToken, checkPermissions(name, id)], catalogoCtrl.updateCatalogoById);
+    
+    // Rutas para el submodulo(detallecatalogo)
+    router.post(path, [verifyToken, checkPermissions(name, id)], catalogoCtrl.createDetCatalogo);
+    router.get(path, [verifyToken, checkPermissions(name, id)], catalogoCtrl.getDetCatalogo);
+    router.get(`${path}/:detallecatalogoId`, [verifyToken, checkPermissions(name, id)], catalogoCtrl.getDetCatalogoById);
+    router.put(`${path}/:detallecatalogoId`, [verifyToken, checkPermissions(name, id)], catalogoCtrl.updateDetCatalogoById);
+    
 };
 
-// Crear rutas para todos los módulos definidos en la configuración
 Object.values(routesConfig).forEach(moduleConfig => {
     createRoutes(moduleConfig);
 });
 
 export default router;
+
+

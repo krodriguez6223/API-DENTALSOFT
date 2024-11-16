@@ -16,7 +16,7 @@ export const createRoles = async () => {
             return;
         }
 
-        const roleValues = ['administrador', 'empleado']; // Cambiamos a una sola matriz plana
+        const roleValues = ['Administrador', 'Empleado']; // Cambiamos a una sola matriz plana
 
         const insertQuery = `
             INSERT INTO administracion.rol (nombre)

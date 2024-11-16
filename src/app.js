@@ -15,9 +15,6 @@ import catalogoRoute from './routes/Administration/catalogo.routes.js'
 import modulosRoute from './routes/Administration/modulos.routes.js'
 import permisosRoute from './routes/Administration//permisos.routes.js'
 
-import { checkPermissions } from './middlewares/permissions.js';
-
-
 
 const app = express()
 
@@ -26,7 +23,6 @@ app.use(express.json());
 app.use(cors());
 
 createRoles();
-
 
 app.get('/', (req, res) => {
     res.json({
