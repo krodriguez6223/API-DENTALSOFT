@@ -13,7 +13,7 @@ const createRoutes = (moduleConfig) => {
     router.post(path, [verifyToken, checkPermissions(name, id)], modulosCtrl.createModulos)
     router.get(path, [verifyToken, checkPermissions(name, id)], modulosCtrl.getModulos)
     router.put(`${path}:moduloId`, [verifyToken, checkPermissions(name, id)], modulosCtrl.updateModulosById)
-    router.get(`${path}/:moduloId`, [verifyToken, checkPermissions(name, id)], modulosCtrl.getModulosById)
+    router.get(`${path}:moduloId`, [verifyToken, checkPermissions(name, id)], modulosCtrl.getModulosById)
 
 };
 

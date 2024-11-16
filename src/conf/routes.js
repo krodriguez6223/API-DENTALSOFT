@@ -13,6 +13,16 @@ const routesConfig = [
         id: 3,
         path: '/mod',
         name: '/modulos'
+    },
+    {
+        id: 4,
+        path: '/rol',
+        name: '/roles'
+    },
+    {
+        id: 5,
+        path: '/rol',
+        name: '/roles'
     }
 ];
 

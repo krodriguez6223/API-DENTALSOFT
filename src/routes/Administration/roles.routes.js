@@ -1,16 +1,24 @@
 import { Router } from "express";
+import routesConfig from '../../conf/routes.js';
+import * as rolesCtrl from '../../controllers/Administration/roles.controller.js'//importa todos mis controladores de la ruta producto
+import { verifyToken } from "../../middlewares/auth.jwt.js";
+import { checkPermissions } from "../../middlewares/permissions.js";
+
 
 const router = Router()
 
-import * as rolesCtrl from '../../controllers/Administration/roles.controller.js'//importa todos mis controladores de la ruta producto
-import { verifyToken } from "../../middlewares/auth.jwt.js";
+const createRoutes = (moduleConfig) => {
+    const { path, name, id } = moduleConfig;
+   
+    router.post(path,[verifyToken, checkPermissions(name, id)],rolesCtrl.createRoles)
+    router.get(path,[verifyToken, checkPermissions(name, id)], rolesCtrl.getRoles)
+    router.put(`${path}:rolId`,[verifyToken, checkPermissions(name, id)], rolesCtrl.updateRolesById)
+    router.get(`${path}:rolId`,[verifyToken, checkPermissions(name, id)], rolesCtrl.getRolesById)
+};
 
-router.post('/',[verifyToken],rolesCtrl.createRoles)
-router.get('/',[verifyToken], rolesCtrl.getRoles)
-router.put('/:rolId',[verifyToken], rolesCtrl.updateRolesById)
-router.get('/:rolId',[verifyToken], rolesCtrl.getRolesById)
-
-
+Object.values(routesConfig).forEach(moduleConfig => {
+    createRoutes(moduleConfig);
+});
 
 
 export default router;
