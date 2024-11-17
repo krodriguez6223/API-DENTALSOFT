@@ -23,6 +23,11 @@ const routesConfig = [
         id: 5,
         path: '/usr',
         name: '/usuarios'
+    },
+    {
+        id: 6,
+        path: '/rol',
+        name: '/roles'
     }
 ];
 
