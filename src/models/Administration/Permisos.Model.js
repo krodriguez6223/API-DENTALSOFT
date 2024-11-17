@@ -39,15 +39,18 @@ export async function getAllPermisosModel() {
   }
 }
 
-
+// trae todos los permisos de un usuario
 export const getPermisoId = async (PermisoId) => {
   try {
     const conexion = await pool.connect();
 
     const query = `
-     SELECT id, descripcion, estado, fechacreacion, fechamodificacion, usuariocreacion_id, usuariomodificacion_id
-	   FROM administracion.permiso
-     WHERE id = $1;
+     	 SELECT p.*
+	     FROM administracion.permisos AS p
+       INNER JOIN administracion.rol AS r ON r.id_rol = p.id_rol
+       INNER JOIN administracion.usuario_rol AS ur ON ur.id_rol = r.id_rol
+       INNER JOIN administracion.usuario AS u ON u.id_usuario = ur.id_usuario
+       WHERE u.id_usuario = $1
     `;
 
     const result = await conexion.query(query, [PermisoId]);
@@ -56,15 +59,15 @@ export const getPermisoId = async (PermisoId) => {
     if (result.rows.length === 0) {
       return null;
     }
-    return result.rows[0];
+    return result.rows;
   } catch (error) {
     console.error('Error al obtener el permiso por ID:', error);
-    throw error;  
+    throw error;
   }
 
 };
 
-export const updatPermiso= async (PermisoId, updatedData) => {
+export const updatPermiso = async (PermisoId, updatedData) => {
   const { id_rol, entidad, id_modulo, created, read, updatePerm, deletePerm, exportPerm, printPerm } = updatedData;
   const conexion = await pool.connect();
 
@@ -96,4 +99,4 @@ export const updatPermiso= async (PermisoId, updatedData) => {
   }
 };
 
-  export default {addPermisos, getAllPermisosModel, getPermisoId, updatPermiso }
+export default { addPermisos, getAllPermisosModel, getPermisoId, updatPermiso }

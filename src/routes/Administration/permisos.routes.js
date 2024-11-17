@@ -12,8 +12,8 @@ const createRoutes = (moduleConfig) => {
    
     router.post(path,[verifyToken, checkPermissions(name, id)],permisosCtrl.createPermisos)
     router.get(path,[verifyToken, checkPermissions(name, id)], permisosCtrl.getPermisos)
-    router.put(`${path}:permisoId`,[verifyToken, checkPermissions(name, id)], permisosCtrl.updatePermisosById)
-    router.get(`${path}:permisoId`,[verifyToken, checkPermissions(name, id)], permisosCtrl.getPermisosById)
+    router.put(`${path}/:permisoId`,[verifyToken, checkPermissions(name, id)], permisosCtrl.updatePermisosById)
+    router.get(`${path}/:permisoId`,[verifyToken, checkPermissions(name, id)], permisosCtrl.getPermisosById)
 };
 
 Object.values(routesConfig).forEach(moduleConfig => {

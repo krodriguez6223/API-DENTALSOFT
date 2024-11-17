@@ -11,8 +11,8 @@ const createRoutes = (moduleConfig) => {
 
     router.post(path,[verifyToken, checkPermissions(name, id)], userCtrl.createUser)
     router.get(path,[verifyToken, checkPermissions(name, id)], userCtrl.getUsers)
-    router.get(`${path}:userId`,[verifyToken, checkPermissions(name, id)], userCtrl.getUserById)
-    router.put(`${path}:userId`,[verifyToken, checkPermissions(name, id)], userCtrl.updateUserById)
+    router.get(`${path}/:userId`,[verifyToken, checkPermissions(name, id)], userCtrl.getUserById)
+    router.put(`${path}/:userId`,[verifyToken, checkPermissions(name, id)], userCtrl.updateUserById)
     router.put(`${path}estado/:userDeleteId`,[verifyToken, checkPermissions(name, id)], userCtrl.deleteUserById)
 
     //creacion de caja

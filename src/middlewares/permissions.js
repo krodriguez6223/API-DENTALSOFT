@@ -30,7 +30,7 @@ export const checkPermissions = (subModulePath, idSubmodulo) => {
                 INNER JOIN administracion.usuario AS u ON u.id_usuario = ur.id_usuario
                 LEFT JOIN administracion.submodulo AS s ON s.id = p.id_submodulo
                 WHERE u.id_usuario = $1
-                AND S.estado = true
+                AND s.estado = true
                 AND s.ruta = $2
                 AND s.id = $3
             `;

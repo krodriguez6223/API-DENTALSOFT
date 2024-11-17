@@ -16,13 +16,13 @@ const routesConfig = [
     },
     {
         id: 4,
-        path: '/rol',
-        name: '/roles'
+        path: '/per',
+        name: '/permisos'
     },
     {
         id: 5,
-        path: '/rol',
-        name: '/roles'
+        path: '/usr',
+        name: '/usuarios'
     }
 ];
 

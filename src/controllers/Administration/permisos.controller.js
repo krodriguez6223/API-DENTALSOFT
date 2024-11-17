@@ -53,7 +53,7 @@ export const updatePermisosById = async (req, res) => {
 
 export const getPermisosById = async (req, res) => {
     try {
-        const permiso = await getPermisoId(req.params.permisoId); 
+        const permiso = await Permisos.getPermisoId(req.params.permisoId); 
         
         if (!permiso) {
           return res.status(404).json({ error: 'Catalogo no encontrado' });

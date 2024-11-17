@@ -12,8 +12,8 @@ const createRoutes = (moduleConfig) => {
    
     router.post(path,[verifyToken, checkPermissions(name, id)],rolesCtrl.createRoles)
     router.get(path,[verifyToken, checkPermissions(name, id)], rolesCtrl.getRoles)
-    router.put(`${path}:rolId`,[verifyToken, checkPermissions(name, id)], rolesCtrl.updateRolesById)
-    router.get(`${path}:rolId`,[verifyToken, checkPermissions(name, id)], rolesCtrl.getRolesById)
+    router.put(`${path}/:rolId`,[verifyToken, checkPermissions(name, id)], rolesCtrl.updateRolesById)
+    router.get(`${path}/:rolId`,[verifyToken, checkPermissions(name, id)], rolesCtrl.getRolesById)
 };
 
 Object.values(routesConfig).forEach(moduleConfig => {
