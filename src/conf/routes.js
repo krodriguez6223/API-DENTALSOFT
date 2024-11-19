@@ -28,6 +28,11 @@ const routesConfig = [
         id: 6,
         path: '/rol',
         name: '/roles'
+    },
+    {
+        id: 7,
+        path: '/sub',
+        name: '/submodulos'
     }
 ];
 

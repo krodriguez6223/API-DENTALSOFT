@@ -13,7 +13,7 @@ async function addModulos(Data) {
     await conexion.query('BEGIN');
 
     const query = ` INSERT INTO administracion.modulo (nombre, descripcion, ruta, estado, fechacreacion) VALUES ($1, $2, $3, $4, NOW()::timestamp(0)) RETURNING *; `;
-    const result = await conexion.query(query, [nombre, descripcion, ruta, estado ]);
+    const result = await conexion.query(query, [nombre, descripcion, ruta, estado]);
 
     await conexion.query('COMMIT');
 
@@ -70,5 +70,37 @@ export const updatModulo = async (ModulosId, updatedData) => {
     conexion.release();
   }
 };
+export const getModuloId = async (moduloIdBySubmodulo) => {
+  try {
+    const connection = await pool.connect();
+    const query = `
+                  SELECT 
+                  sm.id AS id,
+                  sm.nombre AS nombre,
+                  sm.descripcion AS descripcion,
+                  sm.ruta AS ruta,
+                  sm.estado AS estado,
+                  sm.fechacreacion AS fechacreacion,
+                  sm.fechamodificacion AS fechamodificacion,
+                  sm.usuariocreacion_id AS usuariocreacion,
+                  sm.usuariomodificacion_id AS usuariomodificacion
+              FROM 
+                  administracion.submodulo sm
+              WHERE 
+                  sm.modulo_id = $1;
+                 `;
+    const result = await connection.query(query, [moduloIdBySubmodulo]);
+    connection.release();
 
-  export default {addModulos, getAllModulosModel,  updatModulo }
+    if (result.rows.length === 0) {
+      return null;
+    }
+    return result.rows;
+  } catch (error) {
+    console.error('Error al obtener los submodulos del modulo selecionado:', error);
+    throw error;
+  }
+
+};
+
+export default { addModulos, getAllModulosModel, updatModulo , getModuloId}

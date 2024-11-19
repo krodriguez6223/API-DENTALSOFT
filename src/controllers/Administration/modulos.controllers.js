@@ -51,19 +51,21 @@ export const updateModulosById = async (req, res) => {
   }
 };
 
-export const getModulosById = async (req, res) => {
-   /* try {
-        const catalogo = await getCatalogoId(req.params.catalogoId); 
+
+//obtener los submodulo que pertenecen a un modulo en especiico
+export const getSubModulosById = async (req, res) => {
+    try {
+        const conexion = await Modulo.getModuloId(req.params.moduloIdBySubmodulo); 
         
-        if (!catalogo) {
-          return res.status(404).json({ error: 'Catalogo no encontrado' });
+        if (!conexion) {
+          return res.status(404).json({ error: 'Modulo no encontrado' });
         }
     
-        res.status(200).json(catalogo);
+        res.status(200).json(conexion);
       } catch (error) {
-        console.error('Error al obtener el catalogo por ID:', error);
+        console.error('Error al obtener los submodulos pertecientes al modulo seleccionado:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
-      }*/
+      }
 }
 
 
