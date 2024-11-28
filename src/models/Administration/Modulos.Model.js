@@ -80,6 +80,7 @@ export const getModuloId = async (moduloIdBySubmodulo) => {
                   sm.descripcion AS descripcion,
                   sm.ruta AS ruta,
                   sm.estado AS estado,
+                  sm.modulo_id AS modulo_id,
                   sm.fechacreacion AS fechacreacion,
                   sm.fechamodificacion AS fechamodificacion,
                   sm.usuariocreacion_id AS usuariocreacion,
