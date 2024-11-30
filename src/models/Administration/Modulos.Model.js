@@ -31,7 +31,7 @@ export async function getAllModulosModel() {
   const conexion = await pool.connect();
   console
   try {
-    const query = `SELECT * FROM administracion.modulo`;
+    const query = `SELECT * FROM administracion.modulo order by id`;
     const resultado = await conexion.query(query);
     return resultado.rows;
   } finally {
@@ -88,7 +88,8 @@ export const getModuloId = async (moduloIdBySubmodulo) => {
               FROM 
                   administracion.submodulo sm
               WHERE 
-                  sm.modulo_id = $1;
+                  sm.modulo_id = $1
+                  order by sm.id;
                  `;
     const result = await connection.query(query, [moduloIdBySubmodulo]);
     connection.release();
