@@ -45,12 +45,23 @@ export const getPermisoId = async (PermisoId) => {
     const conexion = await pool.connect();
 
     const query = `
-     	 SELECT p.*
-	     FROM administracion.permisos AS p
-       INNER JOIN administracion.rol AS r ON r.id_rol = p.id_rol
-       INNER JOIN administracion.usuario_rol AS ur ON ur.id_rol = r.id_rol
-       INNER JOIN administracion.usuario AS u ON u.id_usuario = ur.id_usuario
-       WHERE u.id_usuario = $1
+    SELECT  
+       p.id_permiso AS id_permiso, 
+       p.id_rol AS id_rol, 
+       p.id_usuario AS id_usuario, 
+       p.id_submodulo AS id_submodulo, 
+       p.created AS created, 
+       p.read AS read, 
+       p.update AS update, 
+       p.delete AS delete, 
+       p.export AS export, 
+       p.print AS print,
+       s.nombre AS nombre_submodulo,
+	     m.nombre AS nombre_modulo
+      FROM administracion.permisos p
+      INNER JOIN administracion.submodulo s ON s.id = p.id_submodulo
+      INNER JOIN administracion.modulo m ON m.id = s.modulo_id
+      WHERE p.id_rol = $1
     `;
 
     const result = await conexion.query(query, [PermisoId]);
