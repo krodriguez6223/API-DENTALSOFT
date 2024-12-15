@@ -57,6 +57,7 @@ export const getPermisoId = async (PermisoId) => {
        p.export AS export, 
        p.print AS print,
        s.nombre AS nombre_submodulo,
+       s.modulo_id AS modulo_id,
 	     m.nombre AS nombre_modulo
       FROM administracion.permisos p
       INNER JOIN administracion.submodulo s ON s.id = p.id_submodulo

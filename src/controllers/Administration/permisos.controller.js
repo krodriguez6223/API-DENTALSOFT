@@ -56,12 +56,12 @@ export const getPermisosById = async (req, res) => {
         const permiso = await Permisos.getPermisoId(req.params.permisoId); 
         
         if (!permiso) {
-          return res.status(404).json({ error: 'Catalogo no encontrado' });
+          return res.status(404).json({ error: 'Este rol no tiene permisos asignados' });
         }
     
         res.status(200).json(permiso);
       } catch (error) {
-        console.error('Error al obtener el catalogo por ID:', error);
+        console.error('Error al obtener el permiso por ID:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
       }
 }

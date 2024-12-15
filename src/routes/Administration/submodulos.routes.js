@@ -12,8 +12,8 @@ const createRoutes = (moduleConfig) => {
 
     router.post(path, [verifyToken, checkPermissions(name, id)], submodulosCtrl.createSubmodulos)
     router.get(path, [verifyToken, checkPermissions(name, id)], submodulosCtrl.getSubmodulos)
-    router.put(`${path}/:submoduloId`, [verifyToken, checkPermissions(name, id)], submodulosCtrl.updateSubmodulosById)
     router.get(`${path}/:submoduloId`, [verifyToken, checkPermissions(name, id)], submodulosCtrl.getSubmodulosById)
+    router.put(`${path}/:submoduloId`, [verifyToken, checkPermissions(name, id)], submodulosCtrl.updateSubmodulosById)
 
 };
 
